@@ -21,7 +21,9 @@ def get_filters():
     while(i==0):
         city=input("For which city (chicago, new york city, washington) ? Type 'exit' to close the program.\n")
         exit() if city.lower()=="exit" else 0
-        i+=1 if city.lower() in CITY_DATA else print("You entered {}. Please enter a valid data (city)".format(city))
+        #i=True if city.lower() in CITY_DATA else print("You entered {}. Please enter a valid data (city)".format(city))
+        if city in CITY_DATA: i+=1
+        else: print("You entered {}. Please enter a valid data (city)".format(city))
 
     months = ['all','january', 'february', 'march', 'april', 'may', 'june']
     # TO DO: get user input for month (all, january, february, ... june)
@@ -29,7 +31,8 @@ def get_filters():
     while(i==0):
         month=input("For which month i.e (january, february, ..., june)? Enter 'all' to get all months.\n")
         exit() if month.lower()=="exit" else 0
-        i+=1 if month.lower() in months else print("You entered {}. Please enter a valid data (month)".format(month))
+        if month.lower() in months: i+=1
+        else: print("You entered {}. Please enter a valid data (month)".format(month))
 
     # TO DO: get user input for day of week (all, monday, tuesday, ... sunday)
     weekDays = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday","all"]
@@ -37,7 +40,8 @@ def get_filters():
     while(i==0):
         day=input("For which day i.e (monday, tuesday, ... sunday)? Enter 'all' to get all days.\n")
         exit() if day.lower()=="exit" else 0
-        i+=1 if day.lower() in weekDays else print("You entered {}. Please enter a valid data (day)".format(day))
+        if day.lower() in weekDays: i+=1
+        else: print("You entered {}. Please enter a valid data (day)".format(day))
 
 
     print('-'*40)
@@ -62,13 +66,13 @@ def load_data(city, month, day):
     df['hour'] = df['Start Time'].dt.hour
     df_copy=df.copy()
 
-    if month not in ['all','ALL','All','aLL','AlL','ALl','alL','aLl']:
+    if month.lower() != 'all':
         months = ['january', 'february', 'march', 'april', 'may', 'june']
         month = months.index(month) + 1
         df = df[df['month'] == month]
     else:
         month='all'
-    if day not in ['all','ALL','All','aLL','AlL','ALl','alL','aLl']:
+    if day.lower() != 'all':
         df = df[df['day_of_week'] == day.title()]
     else:
         day='all'
@@ -173,6 +177,17 @@ def main():
         station_stats(df,df_copy)
         trip_duration_stats(df)
         user_stats(df)
+        view_data = input("Would you like to view 5 rows of individual trip data? Enter yes or no?: ")
+        start_loc = 0
+        i=0
+        while (view_data.lower() == 'yes' and i<len(df.iloc[0:-1]) ):
+            print(df.iloc[start_loc:start_loc+5])
+            start_loc += 5
+            i+=1
+            view_data = input("Do you wish to continue?: ").lower()
+        restart = input('\nWould you like to restart? Enter yes or no.\n')
+        if restart.lower() != 'yes':
+            break
 
 
 if __name__ == "__main__":
